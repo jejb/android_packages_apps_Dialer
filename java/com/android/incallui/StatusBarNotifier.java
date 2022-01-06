@@ -565,13 +565,20 @@ public class StatusBarNotifier
         ContactsComponent.get(context)
             .contactDisplayPreferences()
             .getDisplayName(contactInfo.namePrimary, contactInfo.nameAlternative);
-    if (TextUtils.isEmpty(preferredName)) {
-      return TextUtils.isEmpty(contactInfo.number)
+    String number = TextUtils.isEmpty(contactInfo.number)
           ? null
           : BidiFormatter.getInstance()
               .unicodeWrap(contactInfo.number, TextDirectionHeuristics.LTR);
+    if (TextUtils.isEmpty(preferredName) && TextUtils.isEmpty(contactInfo.number)) {
+	return null;
     }
-    return preferredName;
+    if (TextUtils.isEmpty(preferredName)) {
+	return number;
+    }
+    if (TextUtils.isEmpty(contactInfo.number)) {
+	return preferredName;
+    }
+    return preferredName + "(" + number + ")";
   }
 
   private void addPersonReference(
